@@ -8,7 +8,25 @@
             var api_key = config.mongolab.api_key;
 
             return {
-                read: function () {
+                create: function(task){
+                    task['status'] = 'WIP';
+                    var request = {
+                        method: 'POST',
+                        url: base_uri,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        param: {
+                            'apiKey': api_key
+                        },
+                        data: task
+                    };
+
+                    return $http(request).then(function (response) {
+                        return response.data;
+                    });
+                },
+                read: function (filters) {
                     var request = {
                         method: 'GET',
                         url: base_uri,
@@ -23,7 +41,14 @@
                     return $http(request).then(function (response) {
                         return response.data;
                     });
+                },
+                update: function(task){
+
+                },
+                delete: function(taskId){
+
                 }
+
             };
         }]);
 })();
