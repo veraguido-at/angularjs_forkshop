@@ -3,28 +3,46 @@
 
     /* Tasks Services */
     angular.module('tasksModule')
-        .factory('Tasks', ['config', '$http', function (config, $http) {
+        .factory('Tasks', ['config', '$http', '$q', function (config, $http, $q) {
             var base_uri = config.mongolab.base_uri;
             var api_key = config.mongolab.api_key;
 
             return {
                 create: function(task){
-                    task.status = 'WIP';
-                    var request = {
-                        method: 'POST',
-                        url: base_uri,
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        params: {
-                            'apiKey': api_key
-                        },
-                        data: task
-                    };
+                    return  testStructuralPreconditions(task)
+                        .then(translateToHttp);
 
-                    return $http(request).then(function (response) {
-                        return response.data;
-                    });
+                    function testStructuralPreconditions(task) {
+                        if( Object.keys(task).length > 1 || Object.keys(task).indexOf('description') != 0 ) {
+                            return $q.reject('Only description property is allowed');
+                        }
+
+                        if( task.description == null ) {
+                            return $q.reject('description property could not be null or empty');
+                        }
+
+
+                        return $q.resolve(task);
+                    }
+
+                    function translateToHttp(task) {
+                        task.status = 'WIP';
+                        var request = {
+                            method: 'POST',
+                            url: base_uri,
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            params: {
+                                'apiKey': api_key
+                            },
+                            data: task
+                        };
+
+                        return $http(request).then(function (response) {
+                            return response.data;
+                        });
+                    }
                 },
                 read: function (filters) {
                     var request = {

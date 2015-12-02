@@ -54,17 +54,15 @@
             }));
 
             it('Should task should by an object with description property only', inject(function(Tasks, $httpBackend) {
-                var taskToCreate = {"description" : "Hacer el commit inicial", "status": "WIP"};
+                var taskToCreate = {"description" : "Hacer el commit inicial", "carlos": "WIP"};
+                var error = "";
 
-                $httpBackend.when('POST', configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key)
-                    .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : taskToCreate.description , "status" : "WIP"});
+                Tasks.create(taskToCreate).catch(function (reason) {
+                    error = reason;
+                });
 
-                Tasks.create(taskToCreate);
-
-                var taskWithWIP = _.clone(taskToCreate);
-                taskWithWIP.status = 'WIP';
-                $httpBackend.expectPOST(configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key, taskWithWIP);
-                $httpBackend.flush();
+                scope.$digest();
+                expect(error).not.toBe("");
             }));
         });
 
