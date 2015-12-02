@@ -3,7 +3,7 @@
 
     /* jasmine specs for lists services go here */
 
-    describe('List Service', function() {
+    describe('Tasks Service', function() {
         var scope = {};
         var base_uri = 'carlos';
         var api_key = 'sarlanga';
@@ -21,95 +21,105 @@
             });
         });
 
-        //Translation asserts
-        /*it('Should translate read service to httpGet base_uri', inject(function(Tasks, $httpBackend) {
-            $httpBackend.when('GET', configMock.mongolab.base_uri)
-                .respond([ { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
+        describe('Create method', function() {
+            it('Should translate create service to http POST method', inject(function (Tasks, $httpBackend) {
+                var taskToCreate = {"description": "Hacer el commit inicial"};
 
-            Tasks.read().then(function(items){
-                expect(items.length).toBe(1);
-            });
+                $httpBackend.when('POST', configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond({
+                        "_id": {"$oid": "565c94a8e4b03d453c995e48"},
+                        "description": "Hacer el commit inicial",
+                        "status": "WIP"
+                    });
 
-            $httpBackend.flush();
-        }));*/
+                Tasks.create(taskToCreate).then(function (createdTask) {
+                    expect(createdTask._id).not.toBeNull();
+                });
 
-        it('Should translate create service to httpPost', inject(function(Tasks, $httpBackend) {
-            var taskToCreate = {"description" : "Hacer el commit inicial"};
+                $httpBackend.flush();
+            }));
 
-            $httpBackend.when('POST', configMock.mongolab.base_uri)
-                .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el commit inicial" , "status" : "WIP"});
+            it('Should apply status WIP to all new tasks', inject(function(Tasks, $httpBackend) {
+                var taskToCreate = {"description" : "Hacer el commit inicial"};
 
-            Tasks.create(taskToCreate).then(function(createdTask){
-                expect(createdTask._id).not.toBeNull();
-            });
+                $httpBackend.when('POST', configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : taskToCreate.description , "status" : "WIP"});
 
-            $httpBackend.flush();
-        }));
+                Tasks.create(taskToCreate);
 
-        it('Should translate delete service to httpDelete', inject(function(Tasks, $httpBackend){
-            var taskIdToDelete = "565c94a8e4b03d453c995e48";
+                var taskWithWIP = _.clone(taskToCreate);
+                taskWithWIP.status = 'WIP';
+                $httpBackend.expectPOST(configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key, taskWithWIP);
+                $httpBackend.flush();
+            }));
 
-            $httpBackend.when('DELETE', configMock.mongolab.base_uri+"/"+taskIdToDelete)
-                .respond({ "_id" : { "$oid" : taskIdToDelete} , "description" : "Hacer el workshop" , "status" : "WIP"});
+            it('Should task should by an object with description property only', inject(function(Tasks, $httpBackend) {
+                var taskToCreate = {"description" : "Hacer el commit inicial", "status": "WIP"};
 
-            Tasks.delete(taskIdToDelete).then(function(deletedTask){
-                expect(deletedTask._id).not.toBeNull();
-            });
+                $httpBackend.when('POST', configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : taskToCreate.description , "status" : "WIP"});
 
-            $httpBackend.flush();
-        }));
+                Tasks.create(taskToCreate);
 
-        it('Should translate update service to httpPut', inject(function(Tasks, $httpBackend){
-            var taskToUpdate = { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"};
+                var taskWithWIP = _.clone(taskToCreate);
+                taskWithWIP.status = 'WIP';
+                $httpBackend.expectPOST(configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key, taskWithWIP);
+                $httpBackend.flush();
+            }));
+        });
 
-            $httpBackend.when('PUT', configMock.mongolab.base_uri+"/"+taskToUpdate._id.$oid)
-                .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"});
+        describe('Read method', function() {
+            it('Should translate read service to http GET method', inject(function(Tasks, $httpBackend) {
+                $httpBackend.when('GET', configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond([ { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
 
-            Tasks.update(taskToUpdate).then(function(updatedTask){
-                expect(updatedTask._id).not.toBeNull();
-            });
+                Tasks.read().then(function(items){
+                    expect(items.length).toBe(1);
+                });
 
-            $httpBackend.flush();
-        }));
+                $httpBackend.flush();
+            }));
 
-        //Functionality asserts
-        it('Should apply status WIP to all new tasks', inject(function(Tasks, $httpBackend) {
-            var taskToCreate = {"description" : "Hacer el commit inicial"};
+            it('Should list all tasks when omitting filter param', inject(function(Tasks, $httpBackend) {
+             $httpBackend.when('GET', configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key)
+             .respond([ { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
 
-            $httpBackend.when('POST', configMock.mongolab.base_uri)
-                .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : taskToCreate.description , "status" : "WIP"});
+             Tasks.read().then(function(items){
+             expect(items.length).toBe(1);
+             });
 
-            Tasks.create(taskToCreate);
+             $httpBackend.flush();
+             }));
+        });
 
-            var taskWithWIP = _.clone(taskToCreate);
-            taskWithWIP.status = 'WIP';
-            $httpBackend.expectPOST(configMock.mongolab.base_uri, taskWithWIP);
-            $httpBackend.flush();
-        }));
+        describe('Update method', function() {
+            it('Should translate update service to http PUT', inject(function(Tasks, $httpBackend){
+                var taskToUpdate = { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"};
 
-        it('Should translate delete service to httpDelete', inject(function(Tasks, $httpBackend){
-            var taskIdToDelete = "565c94a8e4b03d453c995e48";
+                $httpBackend.when('PUT', configMock.mongolab.base_uri+"/"+taskToUpdate._id.$oid + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"});
 
-            $httpBackend.when('DELETE', configMock.mongolab.base_uri+"/"+taskIdToDelete)
-                .respond([ { "_id" : { "$oid" : taskIdToDelete} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
+                Tasks.update(taskToUpdate).then(function(updatedTask){
+                    expect(updatedTask._id).not.toBeNull();
+                });
 
-            Tasks.delete(taskIdToDelete).then(function(deletedTask){
-                expect(deletedTask._id).not.toBeNull();
-            });
+                $httpBackend.flush();
+            }));
+        });
 
-            $httpBackend.flush();
-        }));
+        describe('Delete method', function() {
+            it('Should translate delete service to http DELETE', inject(function(Tasks, $httpBackend){
+                var taskIdToDelete = "565c94a8e4b03d453c995e48";
 
-        /*it('Should list all tasks when omitting filter param', inject(function(Tasks, $httpBackend) {
-            $httpBackend.when('GET', configMock.mongolab.base_uri)
-                .respond([ { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
+                $httpBackend.when('DELETE', configMock.mongolab.base_uri+"/"+taskIdToDelete + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond([ { "_id" : { "$oid" : taskIdToDelete} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
 
-            Tasks.read().then(function(items){
-                expect(items.length).toBe(1);
-            });
+                Tasks.delete(taskIdToDelete).then(function(deletedTask){
+                    expect(deletedTask._id).not.toBeNull();
+                });
 
-            $httpBackend.flush();
-        }));*/
-
+                $httpBackend.flush();
+            }));
+        });
     });
 })();

@@ -16,7 +16,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        param: {
+                        params: {
                             'apiKey': api_key
                         },
                         data: task
@@ -54,7 +54,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        param: {
+                        params: {
                             'apiKey': api_key
                         },
                         data: task
@@ -71,7 +71,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        param: {
+                        params: {
                             'apiKey': api_key
                         }
                     };
