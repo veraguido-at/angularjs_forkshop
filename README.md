@@ -4,4 +4,5 @@ This repo is intended to support the angularjs workshop and because you have to 
   
 Before you start, ensure to have
 
- * Nodejs: Install following [these] (https://nodejs.org/en/download/package-manager/) instructions
+ * NodeJS: Install following [these] (https://nodejs.org/en/download/package-manager/) instructions
+ * Grunt-cli: Install following [these] (https://github.com/gruntjs/grunt-cli) instructions (Pay attention to -g flag!)
