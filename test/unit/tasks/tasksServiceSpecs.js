@@ -1,8 +1,7 @@
 (function() {
     'use strict';
 
-    /* jasmine specs for lists services go here */
-
+    //TODO Make better each property test (test the reject reason)
     describe('Tasks Service', function() {
         var scope = {};
         var base_uri = 'carlos';
@@ -33,7 +32,7 @@
                     });
 
                 Tasks.create(taskToCreate).then(function (createdTask) {
-                    expect(createdTask._id).not.toBeNull();
+                    expect(createdTask.id).not.toBeUndefined();
                 });
 
                 $httpBackend.flush();
@@ -53,8 +52,20 @@
                 $httpBackend.flush();
             }));
 
-            it('Should task should by an object with description property only', inject(function(Tasks, $httpBackend) {
+            it('Should create a task with an object with description property only', inject(function(Tasks) {
                 var taskToCreate = {"description" : "Hacer el commit inicial", "carlos": "WIP"};
+                var error = "";
+
+                Tasks.create(taskToCreate).catch(function (reason) {
+                    error = reason;
+                });
+
+                scope.$digest();
+                expect(error).not.toBe("");
+            }));
+
+            it('Should create a task with description not empty', inject(function(Tasks) {
+                var taskToCreate = {"description" : ""};
                 var error = "";
 
                 Tasks.create(taskToCreate).catch(function (reason) {
@@ -78,30 +89,118 @@
                 $httpBackend.flush();
             }));
 
-            it('Should list all tasks when omitting filter param', inject(function(Tasks, $httpBackend) {
-             $httpBackend.when('GET', configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key)
-             .respond([ { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
+            it('Should translate mongodb _id to id', inject(function(Tasks, $httpBackend) {
+                $httpBackend.when('GET', configMock.mongolab.base_uri + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond([ { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
 
-             Tasks.read().then(function(items){
-             expect(items.length).toBe(1);
-             });
+                Tasks.read().then(function(items){
+                    expect(items[0]._id).toBe(undefined);
+                    expect(items[0].id).toBe("565c94a8e4b03d453c995e48");
+                });
 
-             $httpBackend.flush();
-             }));
+                $httpBackend.flush();
+            }));
         });
 
         describe('Update method', function() {
             it('Should translate update service to http PUT', inject(function(Tasks, $httpBackend){
-                var taskToUpdate = { "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"};
+                var taskToUpdate = { "id" : "565c94a8e4b03d453c995e48" , "description" : "Hacer el Commit inicial" , "status" : "WIP"};
 
-                $httpBackend.when('PUT', configMock.mongolab.base_uri+"/"+taskToUpdate._id.$oid + '?apiKey=' + configMock.mongolab.api_key)
+                $httpBackend.when('PUT', configMock.mongolab.base_uri+"/"+taskToUpdate.id + '?apiKey=' + configMock.mongolab.api_key)
                     .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"});
 
                 Tasks.update(taskToUpdate).then(function(updatedTask){
-                    expect(updatedTask._id).not.toBeNull();
+                    expect(updatedTask.id).not.toBeUndefined();
                 });
 
                 $httpBackend.flush();
+            }));
+
+            it('Should translate _id from response to id', inject(function(Tasks, $httpBackend){
+                var taskToUpdate = { "id" : "565c94a8e4b03d453c995e48" , "description" : "Hacer el Commit inicial" , "status" : "WIP"};
+
+                $httpBackend.when('PUT', configMock.mongolab.base_uri+"/"+taskToUpdate.id + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"});
+
+                Tasks.update(taskToUpdate).then(function(updatedTask){
+                    expect(updatedTask.id).not.toBeUndefined();
+                    expect(updatedTask._id).toBeUndefined();
+                });
+
+                $httpBackend.flush();
+            }));
+
+            it('Should translate id property to http param', inject(function(Tasks, $httpBackend){
+                var taskToUpdate = { "id": "565c94a8e4b03d453c995e48" , "description" : "Hacer el Commit inicial" , "status" : "WIP"};
+
+                $httpBackend.when('PUT', configMock.mongolab.base_uri+"/" + taskToUpdate.id + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"});
+
+                Tasks.update(taskToUpdate);
+
+                $httpBackend.expectPUT(configMock.mongolab.base_uri+"/" + taskToUpdate.id + '?apiKey=' + configMock.mongolab.api_key);
+                $httpBackend.flush();
+            }));
+
+            it('Should remove id property from task object', inject(function(Tasks, $httpBackend){
+                var taskToUpdate = { "id": "565c94a8e4b03d453c995e48" , "description" : "Hacer el Commit inicial" , "status" : "WIP"};
+
+                $httpBackend.when('PUT', configMock.mongolab.base_uri+"/" + taskToUpdate.id + '?apiKey=' + configMock.mongolab.api_key)
+                    .respond({ "_id" : { "$oid" : "565c94a8e4b03d453c995e48"} , "description" : "Hacer el Commit inicial" , "status" : "WIP"});
+
+                Tasks.update(taskToUpdate).then(function(updatedTask){
+                    expect(updatedTask.id).not.toBeUndefined();
+                });
+
+                $httpBackend.flush();
+            }));
+
+            it('Should update a task with an object with id, description and status property only', inject(function(Tasks) {
+                var taskToUpdate = {"id":"565c94a8e4b03d453c995e48", "description" : "Hacer el commit inicial", "status":"WIP", "carlos": "WIP"};
+                var error = "";
+
+                Tasks.create(taskToUpdate).catch(function (reason) {
+                    error = reason;
+                });
+
+                scope.$digest();
+                expect(error).not.toBe("");
+            }));
+
+            it('Should update a task with id not empty', inject(function(Tasks) {
+                var taskToUpdate = {"description" : "", "status": "DONE"};
+                var error = "";
+
+                Tasks.create(taskToUpdate).catch(function (reason) {
+                    error = reason;
+                });
+
+                scope.$digest();
+                expect(error).not.toBe("");
+            }));
+
+            it('Should update a task with description not empty', inject(function(Tasks) {
+                var taskToUpdate = {"description" : "", "status": "DONE"};
+                var error = "";
+
+                Tasks.create(taskToUpdate).catch(function (reason) {
+                    error = reason;
+                });
+
+                scope.$digest();
+                expect(error).not.toBe("");
+            }));
+
+            it('Should update a task with status not empty', inject(function(Tasks) {
+                var taskToUpdate = {"description" : "Carlos", "status": ""};
+                var error = "";
+
+                Tasks.update(taskToUpdate).catch(function (reason) {
+                    error = reason;
+                });
+
+                scope.$digest();
+                expect(error).not.toBe("");
             }));
         });
 
@@ -113,7 +212,7 @@
                     .respond([ { "_id" : { "$oid" : taskIdToDelete} , "description" : "Hacer el workshop" , "status" : "WIP"} ]);
 
                 Tasks.delete(taskIdToDelete).then(function(deletedTask){
-                    expect(deletedTask._id).not.toBeNull();
+                    expect(deletedTask.id).not.toBeUndefined();
                 });
 
                 $httpBackend.flush();
