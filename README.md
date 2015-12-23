@@ -1,4 +1,5 @@
-# angularjs_forkshop https://travis-ci.org/mliwski/angularjs_forkshop.svg
+# angularjs_forkshop
+[![Build Status](https://travis-ci.org/mliwski/angularjs_forkshop.svg)](https://travis-ci.org/mliwski/angularjs_forkshop)
 
 This repo is intended to support the angularjs workshop and because you have to fork the repo and then make a pull request, it's named forkshop.
   
