@@ -15,6 +15,7 @@
     "module": true,
     "console": true,
     "inject": true,
+    "sinon": true,
     "_": true
   }
 }

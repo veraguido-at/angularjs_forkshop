@@ -1,10 +1,60 @@
 # angularjs_forkshop
-[![Build Status](https://travis-ci.org/mliwski/angularjs_forkshop.svg)](https://travis-ci.org/mliwski/angularjs_forkshop)
-[![Coverage Status](https://coveralls.io/repos/mliwski/angularjs_forkshop/badge.svg?branch=master&service=github)](https://coveralls.io/github/mliwski/angularjs_forkshop?branch=master)
+Repo con el workshop de AngularJS (AKA forkshop) 
 
-This repo is intended to support the angularjs workshop and because you have to fork the repo and then make a pull request, it's named forkshop.
-  
-Before you start, ensure to have
+Antes de empezar, asegurate de tener instalado
 
- * NodeJS: Install following [these] (https://nodejs.org/en/download/package-manager/) instructions
- * Grunt-cli: Install following [these] (https://github.com/gruntjs/grunt-cli) instructions (Pay attention to -g flag!)
+ * NodeJS: Segui [estas](https://nodejs.org/en/download/package-manager/) instrucciones
+ * Grunt-cli: Segui [estas](https://github.com/gruntjs/grunt-cli) instrucciones (Presta atencion al flag -g)
+
+# Que vimos en la ultima clase?
+En la clase anterior revisamos conceptos de NPM, Grunt, Bower y de la estructura de proyectos. Va la tarea :D
+
+## Tarea
+
+### Paso 1: Github
+
+ - Create un fork de github de [este mismo repo](https://github.com/mliwski/angularjs_forkshop) (si lo tenias de la primer clase eliminalo y forkea nuevamente)
+
+### Paso 2: NPM
+
+ - Configura bien el script de test con la linea ```"node node_modules/karma/bin/karma start test/karma.conf.js"```
+ - Tenes que subir todo a [travis-ci](https://travis-ci.org)
+ y ver que rompen los test online (se supone que esta publicado en https://travis-ci.org/USERNAME/angularjs_forkshop/builds).
+
+**Bonus:**
+
+ - Agregale al README tu badge de travis: https://docs.travis-ci.com/user/status-images/)
+
+### Paso 3: Grunt 
+
+ - Ups nos olvidamos de agregar un el modulo ```grunt-karma``` ... parece que sin eso falla el comando ```grunt compile``` ... arreglalo y que funcione en travis-ci (build passing)
+
+### Paso 4: Bower
+
+ - Me parece que el author es incorrecto, fijate de cambiarlo ;)
+
+
+### Paso 5: Implementacion
+
+ - Implementa el servicio de POST, OJO! tu coverage tiene que estar arriba del 50% o no van a pasar los test.
+ - WAIT ... la estructura que esta planteada no es muy copada ... pasalo a una estructura de proyecto mejor ;)
+
+### Paso 6: Token de entrada
+
+ - Crea una tarea con el sigiuente formato: <NOMBRE> - Ir a la clase de AngularJS 
+
+
+# Recursos
+
+Dejamos aca los links de las principales tecnologias que utilizamos, te pueden servir si te encontras con algun problema o tenes alguna duda
+
+ - [NPM](https://www.npmjs.com/): Gestor de modulos de node
+ - [Grunt](http://gruntjs.com/): Tasks runner
+ - [Bower](http://bower.io/): Gestor de paquetes para javascript (browser side)
+ - [AngularJS](https://docs.angularjs.org/api): Link a la api de AngularJS
+ - [Karma](http://karma-runner.github.io/0.13/index.html): Runner de tests para AngularJS (Simil PHPUnit o Junit) 
+ - [Mocha](https://mochajs.org/): Framework de test para javascript
+ - [Chai](http://chaijs.com/): Libreria de assertions con mucha vitamina mediante plugins
+ - [travis-ci](https://travis-ci.org): Integracion continua en la nube
+ - [Mongolab API](http://docs.mongolab.com/data-api/): API Rest de mongolab
+ 

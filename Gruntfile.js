@@ -10,6 +10,10 @@ module.exports = function(grunt) {
             dist : { nonull: true, expand: true, cwd: "src", src: ['**/**'], dest: 'dist/', timestamp: true},
             dev : { nonull: true, expand: true, cwd: "src", src: ['**/**'], dest: 'tmp/', timestamp: true}
         },
+        clean: {
+            dist : { src: 'dist/', force: true},
+            dev : { src: 'tmp/', force: true, 'no-write': true}
+        },
         connect: {
             server: {
                 options: {
@@ -26,7 +30,7 @@ module.exports = function(grunt) {
         watch: {
             html: {
                 files: ['src/**/*.html', 'src/**/*.js', 'test/**/*.js'],
-                tasks: ['compile'],
+                tasks: ['compile-dev'],
                 options: {
                     livereload: true
                 }
@@ -71,6 +75,7 @@ module.exports = function(grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jscs');
@@ -82,7 +87,9 @@ module.exports = function(grunt) {
     grunt.registerTask('help', ['project_banner_task', 'help_task']);
 
     grunt.registerTask('compile', ['jshint', 'karma:unit']);
-    grunt.registerTask('dev', ['project_banner_task', 'compile', 'copy:dev', 'connect', 'watch']);
 
-    grunt.registerTask('dist', ['project_banner_task', 'compile', 'copy:dist']);
+    grunt.registerTask('compile-dev', ['project_banner_task', 'compile', 'clean:dev', 'copy:dev']);
+    grunt.registerTask('dev', ['compile-dev', 'connect', 'watch']);
+
+    grunt.registerTask('dist', ['project_banner_task', 'compile', 'clean:dist', 'copy:dist']);
 };
