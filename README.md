@@ -41,7 +41,7 @@ En la clase anterior revisamos conceptos de NPM, Grunt, Bower y de la estructura
 
 ### Paso 6: Token de entrada
 
- - Crea una tarea con el sigiuente formato: <NOMBRE> - Ir a la clase de AngularJS 
+ - Crea una tarea con el sigiuente formato: TUNOMBRE - Ir a la clase de AngularJS 
 
 
 # Recursos
