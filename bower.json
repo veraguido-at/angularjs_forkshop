@@ -1,10 +1,9 @@
 {
   "name": "Forkshop",
   "version": "1.0.0",
-  "homepage": "https://github.com/mliwski/angularjs_forkshop",
+  "homepage": "https://github.com/veraguido-at/angularjs_forkshop",
   "authors": [
-    "mliwski <matias.liwski@gmail.com>",
-    "sallende <sebastian.allende@avantrip.com>"
+    "gvera <guido.vera@avantrip.com>"
   ],
   "description": "AngularJS Workshop",
   "main": "src/index.html",
