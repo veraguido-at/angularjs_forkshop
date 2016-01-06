@@ -27,6 +27,6 @@
   },
   "scripts": {
     "postinstall": "node node_modules/bower/bin/bower install",
-    "test": "node wansa nara"
+    "test": "node node_modules/karma/bin/karma start test/karma.conf.js"
   }
 }
